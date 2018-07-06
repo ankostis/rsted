@@ -1,10 +1,9 @@
 import os
-from os.path import join as J
 import tempfile
-import subprocess
 import shutil
 import re
-import logging
+from .sbprun import run_cmd
+
 
 regex_html = re.compile('<html.*</html>', re.DOTALL)
 
@@ -26,8 +25,9 @@ def rst2html(rst_txt):
             fout_rst.write(rst_txt)
 
         os.mkdir(htm_dst)
-        out = subprocess.check_output(cmd_args, cwd=tmpdir)
-        logging.log(logging.INFO, out.decode('utf-8'))
+        err = run_cmd(cmd_args, tmpdir)
+        if err:
+            return err
 
         with open(htm_fname, encoding="utf-8") as fin_html:
             html = fin_html.read()
@@ -36,3 +36,4 @@ def rst2html(rst_txt):
         if m:
             return m.group(0)
         return html
+
