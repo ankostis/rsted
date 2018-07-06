@@ -1,4 +1,3 @@
-
 import os
 from os.path import join as J
 import tempfile
@@ -15,25 +14,25 @@ def rst2html(rst_txt):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         #tmpdir = '/tmp/t1'
-        copy_src = os.path.join(os.path.dirname(__file__), '..', 'sphinx')
-        copy_dst = os.path.join(tmpdir, 'sphinx')
-        rst_fname = os.path.join(copy_dst, 'index.rst')
-        htm_fname = os.path.join(copy_dst, 'index.html')
-        cmd_args = "sphinx-build -b singlehtml  . .".split()
-    
-        shutil.copytree(copy_src, copy_dst)
+        conf_src = os.path.join(os.path.dirname(__file__), '..', 'sphinx')
+        rst_dst = os.path.join(tmpdir, 'sphinx')
+        rst_fname = os.path.join(rst_dst, 'index.rst')
+        htm_dst = os.path.join(tmpdir, 'html')
+        htm_fname = os.path.join(htm_dst, 'index.html')
+        cmd_args = "sphinx-build -b singlehtml  sphinx html".split()
+
+        shutil.copytree(conf_src, rst_dst)
         with open(rst_fname, "w", encoding="utf-8") as fout_rst:
             fout_rst.write(rst_txt)
-        
-        out = subprocess.check_output(cmd_args, cwd=copy_dst)
+
+        os.mkdir(htm_dst)
+        out = subprocess.check_output(cmd_args, cwd=tmpdir)
         logging.log(logging.INFO, out.decode('utf-8'))
-        
+
         with open(htm_fname, encoding="utf-8") as fin_html:
             html = fin_html.read()
-            
+
         m = regex_html.search(html)
         if m:
             return m.group(0)
         return html
-
-
