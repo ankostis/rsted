@@ -24,8 +24,8 @@ if run_from != os.path.curdir:
     os.chdir(run_from)
 
 # create our little application :)
-STATIC_URL = '/_static'  ## For sphinx to wlak alone
-app = Flask(__name__, static_path=STATIC_URL)
+STATIC_URL = 'static'  ## For sphinx to wlak alone
+app = Flask(__name__, static_folder=STATIC_URL)
 app.config.from_pyfile(os.environ.get('RSTED_CONF', 'settings.py'))
 redis = RedisManager(app).get_instance()
 
